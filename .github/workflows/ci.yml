@@ -41,33 +41,38 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Run k6 load test
-        uses: grafana/k6-action@v1.1.0
-        with:
-          # path relative to repo root
-          script: k6/load_test.js
-          args: --summary-export=reports/k6-summary.json --out json=reports/k6-results.json -e K6_VUS=10 -e K6_DURATION=30s
+    - name: Setup k6
+      uses: grafana/setup-k6-action@v1
 
-      - name: Setup Node.js (for report generation)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+    - name: Run k6 load test
+      run: |
+        mkdir -p reports
+        k6 run k6/load_test.js \
+          --summary-export=reports/k6-summary.json \
+          --out json=reports/k6-results.json \
+          -e K6_VUS=10 \
+          -e K6_DURATION=30s
 
-      - name: Generate HTML report from k6 summary
-        run: |
-          node scripts/generate-k6-report.js
+    - name: Setup Node.js (for report generation)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
 
-      - name: Upload k6 reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: k6-reports
-          path: |
-            reports/k6-summary.json
-            reports/k6-results.json
-            reports/k6-report.html
+    - name: Generate HTML report from k6 summary
+      run: |
+        node scripts/generate-k6-report.js
+
+    - name: Upload k6 reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: k6-reports
+        path: |
+          reports/k6-summary.json
+          reports/k6-results.json
+          reports/k6-report.html
 
   publish:
     needs: [test, performance]
