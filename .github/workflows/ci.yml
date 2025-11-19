@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run k6 load test
-        uses: grafana/k6-action@v3
+        uses: grafana/k6-action@v1.1.0
         with:
           # path relative to repo root
           script: k6/load_test.js
