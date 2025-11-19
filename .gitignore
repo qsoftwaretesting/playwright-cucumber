@@ -1,0 +1,10 @@
+node_modules/
+# keep repo reports (but ignore generated k6 outputs)
+reports/
+.env
+.idea/
+.vscode/
+
+# Ignore generated k6 artifacts (these will be produced by CI and uploaded as artifacts)
+reports/k6-*.json
+reports/k6-report.html

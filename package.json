@@ -1,0 +1,16 @@
+{
+  "name": "playwright-cucumber",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+  "test": "cucumber-js --require './features/**/*.js' --format json:reports/cucumber-report.json --tags \"not @manual and not @performance\"",
+    "report": "node generate-report.js",
+    "test:html": "npm run test && npm run report",
+    "postinstall": "npx playwright install --with-deps"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^9.0.0",
+    "playwright": "^1.36.0",
+    "cucumber-html-reporter": "^5.5.0"
+  }
+}

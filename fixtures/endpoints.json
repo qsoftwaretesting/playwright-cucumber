@@ -1,0 +1,13 @@
+{
+  "baseUrl": "https://videogamedb.uk",
+  "auth": {
+    "login": "/api/authenticate"
+  },
+  "videoGame": {
+    "list": "/api/v2/videogame",
+    "create": "/api/v2/videogame",
+    "get": "/api/v2/videogame/{id}",
+    "update": "/api/v2/videogame/{id}",
+    "delete": "/api/v2/videogame/{id}"
+  }
+}

@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies (if any)
+        run: |
+          if [ -f package.json ]; then npm ci || true; fi
+
+      - name: Run cucumber-js tests (skip performance/manual)
+        # use the package.json script which emits JSON to reports/cucumber-report.json
+        run: npm test
+
+      - name: Generate HTML report from cucumber JSON
+        run: node generate-report.js
+
+      - name: Upload cucumber reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-reports
+          path: |
+            reports/cucumber-report.json
+            reports/cucumber-report.html
+
+  performance:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run k6 load test
+        uses: grafana/k6-action@v3
+        with:
+          # path relative to repo root
+          script: k6/load_test.js
+          args: --summary-export=reports/k6-summary.json --out json=reports/k6-results.json -e K6_VUS=10 -e K6_DURATION=30s
+
+      - name: Setup Node.js (for report generation)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate HTML report from k6 summary
+        run: |
+          node scripts/generate-k6-report.js
+
+      - name: Upload k6 reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-reports
+          path: |
+            reports/k6-summary.json
+            reports/k6-results.json
+            reports/k6-report.html
+
+  publish:
+    needs: [test, performance]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download cucumber reports artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cucumber-reports
+          path: reports
+
+      - name: Download k6 reports artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: k6-reports
+          path: reports
+
+      - name: Prepare site folder
+        run: |
+          mkdir -p site
+          # copy reports into site root
+          cp -r reports/* site/ || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1

@@ -1,0 +1,16 @@
+[
+    {
+        "category": "Platform",
+        "name": "Test Game 1",
+        "rating": "Mature",
+        "releaseDate": "2023-01-01",
+        "reviewScore": 95
+      },
+      {
+        "category": "Action",
+        "name": "Test Game 2",
+        "rating": "Teen",
+        "releaseDate": "2022-06-15",
+        "reviewScore": 85
+      }
+]
