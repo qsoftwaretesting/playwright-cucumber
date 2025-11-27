@@ -1,3 +1,4 @@
+@api
 Feature: Video Game API E2E
 
   Scenario Outline: Get list of video games
