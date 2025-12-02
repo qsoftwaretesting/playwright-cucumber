@@ -144,13 +144,13 @@ jobs:
             <h1>Test Reports Dashboard</h1>
             
             <div class="report-section">
-              <h2>🥒 Cucumber Test Reports</h2>
+              <h2> Cucumber Test Reports</h2>
               <a href="cucumber-report.html">View HTML Report</a>
               <a href="cucumber-report.json">View JSON Report</a>
             </div>
             
             <div class="report-section">
-              <h2>⚡ k6 Performance Reports</h2>
+              <h2> k6 Performance Reports</h2>
               <a href="k6-report.html">View HTML Report</a>
               <a href="k6-summary.json">View Summary JSON</a>
               <a href="k6-results.json">View Results JSON</a>
